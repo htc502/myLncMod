@@ -9,12 +9,9 @@ find_triplets <- function(mRNAsexp,
     }
 
     if(ncol(mRNAsexp) != length(TFexp) | length(TFexp) != length(lncRNAexp)) stop('input of diff length')
-    ord <- order(lncRNAexp, decreasing=F)
-    n <- length(lncRNAexp)
-    n_p25 <- round(n*.25)
-    low_grp <- ord[ 1:n_p25 ]
-    high_grp <- ord[ (n-n_p25+1):n ]
-
+cutoffs <- quantile(lncRNAexp,c(.25,.75))
+low_grp <- lncRNAexp < cutoffs[1]
+high_grp <- lncRNAexp > cutoffs[2]
     PCClow <- cor( t(mRNAsexp[ , low_grp]),TFexp[ low_grp] )
     PCChigh <- cor( t(mRNAsexp[ , high_grp]),TFexp[ high_grp] )
     PCClow <- PCClow[,1];PCChigh <- PCChigh[,1]
@@ -23,9 +20,11 @@ find_triplets <- function(mRNAsexp,
     ##assess significant level
     set.seed(seed)
     deltR_nulls <- c()
+	nlow <- sum(low_grp)
+	nhigh <- sum(high_grp)
     for(i in 1:nrand) {
-        null_grplow <- sample(1:n,n_p25)
-        null_grphigh <- sample(setdiff(1:n,null_grplow),n_p25)
+        null_grplow <- sample(1:n,nlow)
+        null_grphigh <- sample(setdiff(1:n,null_grplow),nhigh)
         nullPCClow <- cor(t(mRNAsexp[,null_grplow]),TFexp[null_grplow])
         nullPCClow <- nullPCClow[,1]
         nullPCChigh <- cor(t(mRNAsexp[,null_grphigh]),TFexp[null_grphigh])
