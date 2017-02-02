@@ -9,6 +9,7 @@ find_triplets <- function(mRNAsexp,
     }
 
     if(ncol(mRNAsexp) != length(TFexp) | length(TFexp) != length(lncRNAexp)) stop('input of diff length')
+n <- length(lncRNAexp)
 cutoffs <- quantile(lncRNAexp,c(.25,.75))
 low_grp <- lncRNAexp < cutoffs[1]
 high_grp <- lncRNAexp > cutoffs[2]
@@ -51,7 +52,7 @@ high_grp <- lncRNAexp > cutoffs[2]
 ##g1 <- tf1+rnorm(100,0.1,0.02)
 ##g1_1<- tf1+rnorm(100,4,2)
 ##e <- rbind(g1,g1_1)
-##find_triplets1(e,tf1,lnc1,nrand=1000)
+##find_triplets(e,tf1,lnc1,nrand=1000)
 ##find_triplets(g1,tf1,lnc1,nrand=1000)
 ##find_triplets(g1_1,tf1,lnc1,nrand=1000)
 ##
