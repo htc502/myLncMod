@@ -13,23 +13,25 @@ function(ms,ET,M.exp,E.exp,T.exp,N = 0.25,method="pearson",iqr.filter = c(log2(1
   index.ET.T<-as.character(ET[,2])%in%rownames(data.T)
   index.ET<-index.ET.E&index.ET.T
   ET<-ET[index.ET,]
-
+    data.M <- as.matrix(data.M)
+    data.T <- as.matrix(data.T)
+    data.E <- as.matrix(data.E)
  if(dim(ET)[1]==0){
 return('no effector-Target pairs,return empty result')
 } else {
 
-E2T <- taaply(as.character(ET[,2]),as.character(ET[,1]),function(e) unique(e))
+E2T <- tapply(as.character(ET[,2]),as.character(ET[,1]),function(e) unique(e))
 E2T_E <- names(E2T)
 M_E <- expand.grid(ms,E2T_E)
 
 find_triplets <- function(iM_E) {
-M <- M_E[iM_E,1]
-E <- M_E[iM_E,2]
+M <- as.character(M_E[iM_E,1])
+E <- as.character(M_E[iM_E,2])
 pos <- which(E2T_E == E)
 Ts <- E2T[[pos]];rm(pos)
-mRNAsexp <- T.exp[ Ts, ]
-TFexp <- E.exp[ E,]
-lncRNAexp <- M.exp[ M,]
+mRNAsexp <- data.T[ Ts, ]
+TFexp <- data.E[ E,]
+lncRNAexp <- data.M[ M,]
     if(is.vector(mRNAsexp)){
         tmp <- as.data.frame(matrix(data=mRNAsexp,nrow=1,ncol=length(mRNAsexp)))
         mRNAsexp <- tmp
@@ -53,8 +55,8 @@ MvsT.cor <- cor(t(mRNAsexp),lncRNAexp,use="pairwise.complete.obs",method=method)
 MvsE.res.index <- MvsE.cor < cor.MvsET[1]
 MvsT.res.index <- MvsT.cor < cor.MvsET[2]
 
-
-diff.res.index <- abs(deltR) > cor.EvsT.dif
+delta.cor <- PCChigh-PCClow
+diff.res.index <- abs(delta.cor) > cor.EvsT.dif
 abs.res.index <- abs(PCClow) > cor.EvsT.abs | abs(PCChigh) > cor.EvsT.abs
 deltR.res.index <- diff.res.index & abs.res.index
 
@@ -95,7 +97,7 @@ return(paste0(M,' ',E,' no triples with deltR threshold passed'))
 }
 }
 tmpMET <- mclapply(1:nrow(M_E),find_triplets,mc.cores=cores)
-badME.idx <- lapply(tmpMET, function(e) is.character(e))
+badME.idx <- unlist(lapply(tmpMET, function(e) is.character(e)))
 badres <- unlist(tmpMET[ badME.idx] );badres <- cbind(M_E[ badME.idx,],badres)
 goodres <- do.call('rbind',tmpMET[ !badME.idx ])
 res <- list(bad = badres,
