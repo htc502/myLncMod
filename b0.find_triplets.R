@@ -26,6 +26,7 @@ M_E <- expand.grid(ms,E2T_E)
 
 find_triplets <- function(iM_E) {
 M <- as.character(M_E[iM_E,1])
+if (M %in% rownames(data.M)) {
 E <- as.character(M_E[iM_E,2])
 pos <- which(E2T_E == E)
 Ts <- E2T[[pos]];rm(pos)
@@ -48,7 +49,7 @@ high_grp <- lncRNAexp > cutoffs[2]
 ##test M E T independence
 DE <- t.test(TFexp[ low_grp] ,TFexp[ high_grp ])
 DE.p <- DE$p.value
-DE.FC <- abs(DE$estimate)
+DE.FC <- abs(DE$estimate[1]-DE$estimate[2])
 DE.res.index <- !(DE.p < ET.p.filter & DE.FC > ET.fc.filter)
 MvsE.cor <- cor(lncRNAexp,TFexp,use="pairwise.complete.obs",method=method)
 MvsT.cor <- cor(t(mRNAsexp),lncRNAexp,use="pairwise.complete.obs",method=method)
@@ -61,8 +62,8 @@ abs.res.index <- abs(PCClow) > cor.EvsT.abs | abs(PCChigh) > cor.EvsT.abs
 deltR.res.index <- diff.res.index & abs.res.index
 
 if(sum(deltR.res.index) != 0) {
-tmp <- cbind(rep(M,sum(deltR.res.index)), rep(E,sum(deltR.res.index)),Ts[deltR.res.index], PCClow[deltR.res.index],
-		PCChigh[deltR.res.index],DE.res.index[deltR.res.index],MvsE.res.index[deltR.res.index],
+tmp <- data.frame(rep(M,sum(deltR.res.index)), rep(E,sum(deltR.res.index)),Ts[deltR.res.index], PCClow[deltR.res.index],
+		PCChigh[deltR.res.index],rep(DE.res.index,sum(deltR.res.index)),rep(MvsE.res.index,sum(deltR.res.index)),
 		MvsT.res.index[deltR.res.index])
 
 
@@ -87,7 +88,7 @@ n <- length(lncRNAexp)
     p <- apply(deltR_nulls,1,function(r,nrand) {
 	if(r[1] <= 0) {tmpp <- sum(r[-1]<r[1])/nrand}
 	if(r[1] > 0) {tmpp <- sum(r[-1]>r[1])/nrand}
-	tmppp
+	tmpp
       },nrand=nrand)
 	tmp <- cbind(tmp,p)
 	colnames(tmp) <- c("modulator","effector","target","R_low","R_HIGH","DE","MvsE","MvsT","p-value")
@@ -95,11 +96,15 @@ n <- length(lncRNAexp)
 } else {
 return(paste0(M,' ',E,' no triples with deltR threshold passed'))
 }
+} else {
+  return(paste0(M,' not found in filtered expMtrix'))
+}
 }
 tmpMET <- mclapply(1:nrow(M_E),find_triplets,mc.cores=cores)
 badME.idx <- unlist(lapply(tmpMET, function(e) is.character(e)))
 badres <- unlist(tmpMET[ badME.idx] );badres <- cbind(M_E[ badME.idx,],badres)
 goodres <- do.call('rbind',tmpMET[ !badME.idx ])
+rownames(goodres) <- NULL
 res <- list(bad = badres,
 		good = goodres)
 return(res)
