@@ -73,6 +73,7 @@ file <- paste("correlation_matrix_",m,".Rdata",sep="")
         LOW.indexs<-sum(LOW.index)
         HIGH.indexs<-sum(HIGH.index)
         deltar<-tmp[5]-tmp[4]
+        set.seed(123)
         for(rr in 1:rand){
           LOW.rand.index<-sample(1:ml,LOW.indexs)
           HIGH.rand.index<-sample(setdiff(1:ml,LOW.rand.index),HIGH.indexs)

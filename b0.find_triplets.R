@@ -30,20 +30,16 @@ if (M %in% rownames(data.M)) {
 E <- as.character(M_E[iM_E,2])
 pos <- which(E2T_E == E)
 Ts <- E2T[[pos]];rm(pos)
-mRNAsexp <- data.T[ Ts, ]
-TFexp <- data.E[ E,]
+mRNAsexp <- data.T[ Ts, , drop=F]
+TFexp <- data.E[ E, ]
 lncRNAexp <- data.M[ M,]
-    if(is.vector(mRNAsexp)){
-        tmp <- as.data.frame(matrix(data=mRNAsexp,nrow=1,ncol=length(mRNAsexp)))
-        mRNAsexp <- tmp
-    }
 
-    if(ncol(mRNAsexp) != length(TFexp) | length(TFexp) != length(lncRNAexp)) stop('input of diff length')
+if(ncol(mRNAsexp) != length(TFexp) | length(TFexp) != length(lncRNAexp)) stop('input of diff length')
 cutoffs <- quantile(lncRNAexp,c(.25,.75))
 low_grp <- lncRNAexp < cutoffs[1]
 high_grp <- lncRNAexp > cutoffs[2]
-    PCClow <- cor( t(mRNAsexp[ , low_grp]),TFexp[ low_grp],use="pairwise.complete.obs",method=method )
-    PCChigh <- cor( t(mRNAsexp[ , high_grp]),TFexp[ high_grp] ,use="pairwise.complete.obs",method=method)
+    PCClow <- cor( t(mRNAsexp[ , low_grp,drop=F]),TFexp[ low_grp],use="pairwise.complete.obs",method=method )
+    PCChigh <- cor( t(mRNAsexp[ , high_grp,drop=F]),TFexp[ high_grp] ,use="pairwise.complete.obs",method=method)
     PCClow <- PCClow[,1];PCChigh <- PCChigh[,1]
 
 ##test M E T independence
@@ -77,9 +73,10 @@ n <- length(lncRNAexp)
     for(i in 1:nrand) {
         null_grplow <- sample(1:n,nlow)
         null_grphigh <- sample(setdiff(1:n,null_grplow),nhigh)
-        nullPCClow <- cor(t(mRNAsexp[deltR.res.index,null_grplow]),TFexp[null_grplow],use="pairwise.complete.obs",method=method)
+      
+        nullPCClow <- cor(t(mRNAsexp[as.character(tmp[,3]),null_grplow,drop=F]),TFexp[null_grplow],use="pairwise.complete.obs",method=method)
         nullPCClow <- nullPCClow[,1]
-        nullPCChigh <- cor(t(mRNAsexp[deltR.res.index,null_grphigh]),TFexp[null_grphigh],use="pairwise.complete.obs",method=method)
+        nullPCChigh <- cor(t(mRNAsexp[as.character(tmp[,3]),null_grphigh,drop=F]),TFexp[null_grphigh],use="pairwise.complete.obs",method=method)
         nullPCChigh <- nullPCChigh[,1]
         deltR_null <- nullPCChigh-nullPCClow
         deltR_nulls <- cbind(deltR_nulls,deltR_null)
