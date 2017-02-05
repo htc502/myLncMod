@@ -66,6 +66,12 @@ tmp <- data.frame(rep(M,sum(deltR.res.index)), rep(E,sum(deltR.res.index)),Ts[de
 n <- length(lncRNAexp)
     deltR <- tmp[,5]-tmp[,4]
     ##assess significant level
+    
+    ##make sure that the seed only function locally..
+    if(exists('.Random.seed')) {
+    old <- .Random.seed
+    on.exit( { .Random.seed <<- old } )
+    }
     set.seed(seed)
     deltR_nulls <- c()
 	nlow <- sum(low_grp)

@@ -73,6 +73,11 @@ file <- paste("correlation_matrix_",m,".Rdata",sep="")
         LOW.indexs<-sum(LOW.index)
         HIGH.indexs<-sum(HIGH.index)
         deltar<-tmp[5]-tmp[4]
+        ##make sure that the seed only function locally..
+        if(exists('.Random.seed')) {
+        old <- .Random.seed
+        on.exit( { .Random.seed <<- old } )
+      }
         set.seed(123)
         for(rr in 1:rand){
           LOW.rand.index<-sample(1:ml,LOW.indexs)
