@@ -38,6 +38,9 @@ if(ncol(mRNAsexp) != length(TFexp) | length(TFexp) != length(lncRNAexp)) stop('i
 cutoffs <- quantile(lncRNAexp,c(.25,.75))
 low_grp <- lncRNAexp < cutoffs[1]
 high_grp <- lncRNAexp > cutoffs[2]
+if(sum(low_grp) == 0 | sum(high_grp) == ) {
+	return(paste0(M,' ',E,' high group or low group empty, probabaly modulator expression is extremely biased, check them please, there may be extra bonus'))
+	} else {
     PCClow <- cor( t(mRNAsexp[ , low_grp,drop=F]),TFexp[ low_grp],use="pairwise.complete.obs",method=method )
     PCChigh <- cor( t(mRNAsexp[ , high_grp,drop=F]),TFexp[ high_grp] ,use="pairwise.complete.obs",method=method)
     PCClow <- PCClow[,1];PCChigh <- PCChigh[,1]
@@ -96,6 +99,7 @@ n <- length(lncRNAexp)
 	tmp <- cbind(tmp,p)
 	colnames(tmp) <- c("modulator","effector","target","R_low","R_HIGH","DE","MvsE","MvsT","p-value")
     return(tmp)
+	}
 } else {
 return(paste0(M,' ',E,' no triples with deltR threshold passed'))
 }
