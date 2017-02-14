@@ -47,23 +47,23 @@ triPlot <- function(m,e,t,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)',
     lm_hq25 <- lm( dat$gene[ m > q25[2]] ~ dat$TF[ m > q25[2]])
     lm_middle <- lm(dat$gene[ m >= q25[1] & m < q25[2] ] ~ dat$TF[ m>= q25[1] & m <= q25[2] ] )
     lm_all <- lm(dat$gene ~ dat$TF)
-    abline(lm_hq25,col='red')
-    abline(lm_lq25,col='green')
-    abline(lm_middle,col='grey')
-    abline(lm_all,col='black')
+    abline(lm_hq25,col='red',lty='dashed')
+    abline(lm_lq25,col='green',lty='dashed')
+    abline(lm_middle,col='grey',lty='dashed')
+    abline(lm_all,col='black',lty='dashed')
 
     legend('bottomright',
            col=c('red','green'),
-           legend=c('LncExp high sample',
-                    'LncExp low sample'),
+           legend=c('High LncExp',
+                    'Low LncExp'),
            pch=20
            )
     legend('bottomleft',
            col=c('red','green','grey','black'),
-           legend=c('lncHigh',
-                    'lncLow',
-                    'lncMid',
-                    'all'),
+           legend=c('High LncExp',
+                    'Low LncExp',
+                    'Middle LncExp',
+                    'All samples'),
            lty=rep(1,4)
            )
 
