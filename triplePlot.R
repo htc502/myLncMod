@@ -45,7 +45,7 @@ triPlot <- function(m,e,t,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)',
 
     lm_lq25 <- lm( dat$gene[ m < q25[1]] ~ dat$TF[ m < q25[1]] )
     lm_hq25 <- lm( dat$gene[ m > q25[2]] ~ dat$TF[ m > q25[2]])
-    lm_middle <- lm(dat$gene[ m >= q25[1] & m < q25[2] ] ~ dat$TF[ m>= q25[1] & m <= q25[2] ] )
+    lm_middle <- lm(dat$gene[ m >= q25[1] & m <= q25[2] ] ~ dat$TF[ m>= q25[1] & m <= q25[2] ] )
     lm_all <- lm(dat$gene ~ dat$TF)
     abline(lm_hq25,col='red',lty='dashed')
     abline(lm_lq25,col='green',lty='dashed')
