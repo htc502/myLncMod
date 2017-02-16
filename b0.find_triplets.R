@@ -57,6 +57,8 @@ my.tri.app <-
 
                         ##here PCClow or PCChigh can be NA when there is no variance in TF/mRNA expression of high/low group
                         ##I want to put PCC = 0 for these conditions to make them as failed triples
+                        ## when using mclapply, these failed triples may affect others in the same computor core
+                        
                         PCClow[is.na(PCClow)] <- 0
                         PCChigh[is.na(PCChigh)] <- 0
                         delta.cor <- PCChigh-PCClow
