@@ -27,7 +27,7 @@ getContext_TFtarget <- function(tmpE.exp, tf_target) {
     tmpres
   }) -> lmres
   lmres <- t(lmres)
-  padj <- p.adjust(as.numeric(lmres[, 4]), 'BH')
+  padj <- p.adjust(as.numeric(lmres[, 5]), 'BH')
   lmres <- cbind(lmres, fdr = padj)
   colnames(lmres) <- c('tf','target','r2','beta','pvalue','fdr')
   lmres
