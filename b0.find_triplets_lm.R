@@ -1,6 +1,9 @@
 my.tri.app.lm <-
     function(ms,ET,M.exp,E.exp,T.exp,N = 0.25,groupMin=20,
-             correction="BH",cores=1){
+             correction="BH",p.cutoff=0.01, cores=1){
+      data.E = E.exp
+      data.M = M.exp
+      data.T = T.exp
 
         index.ET.E<-as.character(ET[,1])%in%rownames(data.E)
         index.ET.T<-as.character(ET[,2])%in%rownames(data.T)
@@ -16,16 +19,21 @@ my.tri.app.lm <-
             E2T <- tapply(as.character(ET[,2]),as.character(ET[,1]),function(e) unique(e))
             E2T_E <- names(E2T)
             ##M_E <- expand.grid(ms,E2T_E)
-            MET <- expand.grid(1:length(ms),1:nrow(ET))
+            MET0 <- expand.grid(1:length(ms),1:nrow(ET))
+            MET <- data.frame(M=as.character(ms[MET0[,1]]),E=as.character(ET[MET0[,2],1]),
+                         Tg=as.character(ET[MET0[,2],2]),stringsAsFactors=F)
 
             find_triplets <- function(i) {
-                M <- as.character(ms[MET[i,1]])
-                if (!(M %in% rownames(data.M)) ) {
-                    return(paste0(M,' not found in filtered expMtrix'))
+                M <- MET[i,1]
+
+                E <- MET[i,2]
+                Tg <- MET[i,3]
+                 if (!(M %in% rownames(data.M)) | 
+                     !(E %in% rownames(data.E)) |
+                     !(Tg %in% rownames(data.E))) {
+                    return(paste0(M,' ',E,' ',Tg,': not found in filtered expMtrix'))
                 }
 
-                E <- as.character(ET[MET[i,2],1])
-                Tg <- as.character(ET[MET[i,2],2])
                 mRNAexp <- data.T[ Tg,]
                 TFexp <- data.E[ E, ]
                 lncRNAexp <- data.M[ M,]
@@ -47,14 +55,14 @@ my.tri.app.lm <-
                     list(lower=q13[1]-1.5*iqr,
                          upper=q13[2]+1.5*iqr)
                 })
-                which(TFexp > TF_extremValue$low$upper)[low_grp] -> tf_lowgrp_outlier1
-                which(TFexp < TF_extremValue$low$lower)[low_grp] -> tf_lowgrp_outlier2
+                which((TFexp > TF_extremValue$low$upper) & low_grp) -> tf_lowgrp_outlier1
+                which((TFexp < TF_extremValue$low$lower) & low_grp) -> tf_lowgrp_outlier2
                 tf_lowgrp_outlierIdx <- c(tf_lowgrp_outlier1,tf_lowgrp_outlier2)
-                which(TFexp > TF_extremValue$mid$upper)[mid_grp] -> tf_midgrp_outlier1
-                which(TFexp < TF_extremValue$mid$lower)[mid_grp] -> tf_midgrp_outlier2
+                which((TFexp > TF_extremValue$mid$upper) & mid_grp) -> tf_midgrp_outlier1
+                which((TFexp < TF_extremValue$mid$lower) & mid_grp) -> tf_midgrp_outlier2
                 tf_midgrp_outlierIdx <- c(tf_midgrp_outlier1,tf_midgrp_outlier2)
-                which(TFexp > TF_extremValue$high$upper)[high_grp] -> tf_highgrp_outlier1
-                which(TFexp < TF_extremValue$high$lower)[high_grp] -> tf_highgrp_outlier2
+                which((TFexp > TF_extremValue$high$upper) & high_grp) -> tf_highgrp_outlier1
+                which((TFexp < TF_extremValue$high$lower) & high_grp) -> tf_highgrp_outlier2
                 tf_highgrp_outlierIdx <- c(tf_highgrp_outlier1,tf_highgrp_outlier2)
 
                 mRNA_extremValue <- tapply(mRNAexp, grp, function(e) {
@@ -63,39 +71,60 @@ my.tri.app.lm <-
                     list(lower=q13[1]-1.5*iqr,
                          upper=q13[2]+1.5*iqr)
                 })
-                which(mRNAexp > mRNA_extremValue$low$upper)[low_grp] -> mrna_lowgrp_outlier1
-                which(mRNAexp < mRNA_extremValue$low$lower)[low_grp] -> mrna_lowgrp_outlier2
-                mRNA_lowgrp_outlierIdx <- c(mRNA_lowgrp_outlier1,mRNA_lowgrp_outlier2)
-                which(mRNAexp > mRNA_extremValue$mid$upper)[mid_grp] -> mrna_midgrp_outlier1
-                which(mRNAexp < mRNA_extremValue$mid$lower)[mid_grp] -> mrna_midgrp_outlier2
-                mRNA_midgrp_outlierIdx <- c(mRNA_midgrp_outlier1,mRNA_midgrp_outlier2)
-                which(mRNAexp > mRNA_extremValue$high$upper)[high_grp] -> mrna_highgrp_outlier1
-                which(mRNAexp < mRNA_extremValue$high$lower)[high_grp] -> mrna_highgrp_outlier2
-                mRNA_highgrp_outlierIdx <- c(mRNA_highgrp_outlier1,mRNA_highgrp_outlier2)
+                which((mRNAexp > mRNA_extremValue$low$upper) & low_grp) -> mrna_lowgrp_outlier1
+                which((mRNAexp < mRNA_extremValue$low$lower) & low_grp) -> mrna_lowgrp_outlier2
+                mRNA_lowgrp_outlierIdx <- c(mrna_lowgrp_outlier1,mrna_lowgrp_outlier2)
+                which((mRNAexp > mRNA_extremValue$mid$upper) & mid_grp) -> mrna_midgrp_outlier1
+                which((mRNAexp < mRNA_extremValue$mid$lower) & mid_grp) -> mrna_midgrp_outlier2
+                mRNA_midgrp_outlierIdx <- c(mrna_midgrp_outlier1,mrna_midgrp_outlier2)
+                which((mRNAexp > mRNA_extremValue$high$upper) & high_grp) -> mrna_highgrp_outlier1
+                which((mRNAexp < mRNA_extremValue$high$lower) & high_grp) -> mrna_highgrp_outlier2
+                mRNA_highgrp_outlierIdx <- c(mrna_highgrp_outlier1,mrna_highgrp_outlier2)
 
                 ##set outliers'expression value to NA
+                if(!length(c(tf_lowgrp_outlierIdx,tf_highgrp_outlierIdx,tf_midgrp_outlierIdx))==0) {
                 TFexp[ c(tf_lowgrp_outlierIdx,tf_highgrp_outlierIdx,tf_midgrp_outlierIdx) ] <- NA
+                }
+                
+                if(!length(c(mRNA_lowgrp_outlierIdx,mRNA_highgrp_outlierIdx,mRNA_midgrp_outlierIdx))==0) {
                 mRNAexp[ c(mRNA_lowgrp_outlierIdx,mRNA_highgrp_outlierIdx,mRNA_midgrp_outlierIdx) ] <- NA
+                }
                 ## number of available values in cleaned data within each group:
-                nlowgrp <- sum(!is.na(TF_exp[low_grp] + mRNAexp[low_grp]))
-                nhighgrp <- sum(!is.na(TF_exp[high_grp] + mRNAexp[high_grp]))
-                nmidgrp <- sum(!is.na(TF_exp[mid_grp] + mRNAexp[mid_grp]))
+                nlowgrp <- sum(!is.na(TFexp[low_grp] + mRNAexp[low_grp]))
+                nhighgrp <- sum(!is.na(TFexp[high_grp] + mRNAexp[high_grp]))
+                nmidgrp <- sum(!is.na(TFexp[mid_grp] + mRNAexp[mid_grp]))
 
                 if(nlowgrp < groupMin |
                    nhighgrp < groupMin |
-                   nmidgrp <- groupMin) {
+                   nmidgrp < groupMin) {
                     return(paste0(M,' ',E,' ',Tg,': high/mid/low group size < predefined groupMin(default:20) after remove outlier'))
                 }
 
-                model <- lm( mRNAexp ~ TFexp + grp)
-                model
+                model <- lm( mRNAexp ~ TFexp + grp + TFexp:grp)
+                model_coef <- coefficients(summary(model))
+                if(!(nrow(model_coef)==6 & ncol(model_coef)==4)) {
+                    return(paste0(M,' ',E,' ',Tg,': the model dimension is not proper, some group may have empty values'))
+                }
+                p <- model_coef[,4]
+                beta <- model_coef[,1]
+                names(p) <- names(beta) <- rownames(model_coef)
+                resi <- list(triple=c(M,E,Tg),beta=beta,p=p,
+                             outlier=list(TF=c(tf_lowgrp_outlierIdx,tf_highgrp_outlierIdx,tf_midgrp_outlierIdx),
+                                          mRNA=c(mRNA_lowgrp_outlierIdx,mRNA_highgrp_outlierIdx,mRNA_midgrp_outlierIdx)))
+                return(resi)
             }
-            lmFits <- mclapply(1:nrow(MET),find_triplets,mc.cores=cores)
-            badME.idx <- unlist(lapply(lmFIts, function(e) is.character(e)))
-            badres <- unlist(lmFIts[ badME.idx] );badres <- cbind(M_E[ badME.idx,],badres)
-            goodres <- lmFIts[ !badME.idx ]
+            library(parallel)
+            ##lmFits <- mclapply(1:nrow(MET),find_triplets,mc.cores=cores)
+            lmFits <- lapply(1:nrow(MET),find_triplets) ##for debug find_triplets
+            badME.idx <- unlist(lapply(lmFits, function(e) is.character(e)))
+            badres <- unlist(lmFits[ badME.idx] );badres <- cbind(MET[ badME.idx,],badres)
+            goodres <- lmFits[ !badME.idx ]
+            ##put those triples with diff beta betwee high and low grp (TFexp:grplow should be significant)
+            unlist(lapply(goodres, function(e) e$p['TFexp:grplow'] < p.cutoff) )-> sigIdx
+            sigres <- goodres[ sigIdx ]
             res <- list(bad = badres,
-                        good = goodres)
+                        good = goodres,
+                        sig=sigres)
             return(res)
         }
     }
