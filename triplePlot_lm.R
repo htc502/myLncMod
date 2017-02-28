@@ -101,12 +101,15 @@ triPlot <- function(m,e,tg,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)'
    
     if(length(outlier$TF) != 0) {
       outlierdat <- subset(dat,rownames(dat) %in% outlier$TF)
+      if(nrow(outlierdat) != 0) { ## nrow == 0 means except TF, gene or lncRNA was set to NA in the early step and removed in line 91
     text(outlierdat$TF,outlierdat$gene,labels = rownames(outlierdat),cex = 0.6,col='brown')
+      }
 }
 if(length(outlier$mRNA) != 0) {     
   outlierdat <- subset(dat,rownames(dat) %in% outlier$mRNA)
+  if(nrow(outlierdat) != 0) { ##see line 104
     text(outlierdat$TF,outlierdat$gene,labels = rownames(outlierdat),cex = 0.6,col='blue')
-  
+  }
 }
  if(length(outlier$common) != 0) {     
   outlierdat <- subset(dat,rownames(dat) %in% outlier$common)
