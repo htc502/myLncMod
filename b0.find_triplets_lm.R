@@ -109,13 +109,13 @@ my.tri.app.lm <-
                 beta <- model_coef[,1]
                 names(p) <- names(beta) <- rownames(model_coef)
                 resi <- list(triple=c(M,E,Tg),beta=beta,p=p,
-                             outlier=list(TF=c(tf_lowgrp_outlierIdx,tf_highgrp_outlierIdx,tf_midgrp_outlierIdx),
-                                          mRNA=c(mRNA_lowgrp_outlierIdx,mRNA_highgrp_outlierIdx,mRNA_midgrp_outlierIdx)))
+                             outlier=list(TF=list(low=tf_lowgrp_outlierIdx,high=tf_highgrp_outlierIdx,mid=tf_midgrp_outlierIdx),
+                                          mRNA=list(low=mRNA_lowgrp_outlierIdx,high=mRNA_highgrp_outlierIdx,mid=mRNA_midgrp_outlierIdx)))
                 return(resi)
             }
             library(parallel)
-            ##lmFits <- mclapply(1:nrow(MET),find_triplets,mc.cores=cores)
-            lmFits <- lapply(1:nrow(MET),find_triplets) ##for debug find_triplets
+            lmFits <- mclapply(1:nrow(MET),find_triplets,mc.cores=cores)
+           ## lmFits <- lapply(1:nrow(MET),find_triplets) ##for debug find_triplets
             badME.idx <- unlist(lapply(lmFits, function(e) is.character(e)))
             badres <- unlist(lmFits[ badME.idx] );badres <- cbind(MET[ badME.idx,],badres)
             goodres <- lmFits[ !badME.idx ]
