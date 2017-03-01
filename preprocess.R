@@ -69,6 +69,7 @@ PCAplot <- function(mtr,label=NULL,col=NULL) {
     tmp <- t(mtr)
     tmp[ is.na(tmp) ] <- 0
     pca.res <- prcomp(tmp)
+    if(is.null(col)) col='black'
     pdf('PCAplot.pdf')
     plot(pca.res)
     plot(pca.res$x[,1:2],xlab='PC1',
