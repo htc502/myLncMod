@@ -116,8 +116,5 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,swap_grp_p_cutoff=.0
     write.csv(res$c4_aa,file='c4_aa.csv')
     write.csv(res$c5_ia,file='c5_ia.csv')
     write.csv(res$c6_ii,file='c6_ii.csv')
-    save(sigOrigin$PMat,
-         sigOrigin$BetaMat,
-         sigOrigin$tripleMat,
-         sigOrigin$outlierMat,file='significant_triples.rda')
+    save(sigOrigin,file='significant_triples.rda')
 }
