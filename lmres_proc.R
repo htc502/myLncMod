@@ -1,4 +1,4 @@
-lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,swap_grp_p_cutoff=.005) {
+lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata) {
     setwd(filedir)
     resFnames = list.files(path=filedir,pattern='lmres.*.rda')
     if(length(resFnames) == 0) stop('data files not found')
@@ -53,7 +53,7 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,swap_grp_p_cutoff=.0
 
     save(PMat,BetaMat,TripleMat,outlierMat,file='triples_pastQC.rda')
     fdr <- p.adjust(PMat[,5],'BH')
-    idx <- fdr < 0.25 ##or .25
+    idx <- fdr < fdrcutoff ##or .25
     PMat1 = PMat[ idx, ]
     BetaMat1 = BetaMat[ idx, ]
     TripleMat1 = TripleMat[ idx, ]
@@ -67,28 +67,17 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,swap_grp_p_cutoff=.0
     parse_lmRes(swapres) -> swapres1
     save(swapres,swapres1,file='swith_high_low_group_lmres.rda')
 
-    ##we have to pick up TF-target significant in lowgrp
-    swapres1$PMat[,2] < 0.005 -> idx1
-    sigSwapres <- list(PMat=subset(swapres1$PMat,idx1),
-                       BetaMat=subset(swapres1$BetaMat, idx1),
-                       tripleMat=subset(swapres1$tripleMat,idx1),
-                       outlierMat=subset(swapres1$outlierMat,idx1))
-
-    match(paste(sigSwapres$tripleMat[,1],sigSwapres$tripleMat[,2],sigSwapres$tripleMat[,3],sep='_'),
-          paste(TripleMat1[,1],TripleMat1[,2],TripleMat1[,3],sep='_')) -> pos
-
-    sigOrigin <- list(PMat=PMat1[ pos, ],
-                      BetaMat=BetaMat1[ pos, ],
-                      tripleMat=TripleMat1[ pos,] ,
-                      outlierMat=outlier1[ pos,])
-    ##sigOrigin ##high grp as reference
-    sigSwap <- sigSwapres ##low grp as reference
+    lmRes_ref_higgrp <- list(PMat=PMat1,
+                      BetaMat=BetaMat1,
+                      tripleMat=TripleMat1 ,
+                      outlierMat=outlier1)
+    lmRes_ref_lowgrp <- swapres1
     ##classify six categories
     ##category 1: enhanced inhibition
     ## low  high
     ##  - -> --
-    betaLow <- sigSwap$BetaMat[,2]
-    betaHigh <- sigOrigin$BetaMat[,2]
+    betaLow <- lmRes_ref_lowgrp$BetaMat[,2]
+    betaHigh <- lmRes_ref_higgrp$BetaMat[,2]
 
     idx.cat1 <- betaLow < 0 & betaHigh < 0 & betaLow > betaHigh
     ##categoy 2: attenuates inhibition
@@ -104,12 +93,13 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,swap_grp_p_cutoff=.0
     idx.cat6 <- betaLow > 0 & betaHigh < 0
 
     ##classified result
-    res <-list(c1_ei=cbind(sigOrigin$tripleMat[idx.cat1,,drop=F],betaLow=betaLow[idx.cat1],betaLowP=sigSwap$PMat[idx.cat1,2,drop=F],betaHigh=betaHigh[idx.cat1],betHighP=sigOrigin$PMat[idx.cat1,2,drop=F]),
-               c2_ai=cbind(sigOrigin$tripleMat[idx.cat2,,drop=F],betaLow=betaLow[idx.cat2],betaLowP=sigSwap$PMat[idx.cat2,2,drop=F],betaHigh=betaHigh[idx.cat2],betHighP=sigOrigin$PMat[idx.cat2,2,drop=F]),
-               c3_ea=cbind(sigOrigin$tripleMat[idx.cat3,,drop=F],betaLow=betaLow[idx.cat3],betaLowP=sigSwap$PMat[idx.cat3,2,drop=F],betaHigh=betaHigh[idx.cat3],betHighP=sigOrigin$PMat[idx.cat3,2,drop=F]),
-               c4_aa=cbind(sigOrigin$tripleMat[idx.cat4,,drop=F],betaLow=betaLow[idx.cat4],betaLowP=sigSwap$PMat[idx.cat4,2,drop=F],betaHigh=betaHigh[idx.cat4],betHighP=sigOrigin$PMat[idx.cat4,2,drop=F]),
-               c5_ia=cbind(sigOrigin$tripleMat[idx.cat5,,drop=F],betaLow=betaLow[idx.cat5],betaLowP=sigSwap$PMat[idx.cat5,2,drop=F],betaHigh=betaHigh[idx.cat5],betHighP=sigOrigin$PMat[idx.cat5,2,drop=F]),
-               c6_ii=cbind(sigOrigin$tripleMat[idx.cat6,,drop=F],betaLow=betaLow[idx.cat6],betaLowP=sigSwap$PMat[idx.cat6,2,drop=F],betaHigh=betaHigh[idx.cat6],betHighP=sigOrigin$PMat[idx.cat6,2,drop=F]))
+    res0 <-list(c1_ei=cbind(lmRes_ref_higgrp$tripleMat[idx.cat1,,drop=F],betaLow=betaLow[idx.cat1],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat1,2,drop=F],betaHigh=betaHigh[idx.cat1],betaHighP=lmRes_ref_higgrp$PMat[idx.cat1,2,drop=F]),
+               c2_ai=cbind(lmRes_ref_higgrp$tripleMat[idx.cat2,,drop=F],betaLow=betaLow[idx.cat2],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat2,2,drop=F],betaHigh=betaHigh[idx.cat2],betaHighP=lmRes_ref_higgrp$PMat[idx.cat2,2,drop=F]),
+               c3_ea=cbind(lmRes_ref_higgrp$tripleMat[idx.cat3,,drop=F],betaLow=betaLow[idx.cat3],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat3,2,drop=F],betaHigh=betaHigh[idx.cat3],betaHighP=lmRes_ref_higgrp$PMat[idx.cat3,2,drop=F]),
+               c4_aa=cbind(lmRes_ref_higgrp$tripleMat[idx.cat4,,drop=F],betaLow=betaLow[idx.cat4],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat4,2,drop=F],betaHigh=betaHigh[idx.cat4],betaHighP=lmRes_ref_higgrp$PMat[idx.cat4,2,drop=F]),
+               c5_ia=cbind(lmRes_ref_higgrp$tripleMat[idx.cat5,,drop=F],betaLow=betaLow[idx.cat5],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat5,2,drop=F],betaHigh=betaHigh[idx.cat5],betaHighP=lmRes_ref_higgrp$PMat[idx.cat5,2,drop=F]),
+               c6_ii=cbind(lmRes_ref_higgrp$tripleMat[idx.cat6,,drop=F],betaLow=betaLow[idx.cat6],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat6,2,drop=F],betaHigh=betaHigh[idx.cat6],betaHighP=lmRes_ref_higgrp$PMat[idx.cat6,2,drop=F]))
+    res <- lappy(res0, function(e) colnames(e) <- c("lncRNA","TF","mRNA","betaLow","p","betaHigh","p")
     write.csv(res$c1_ei,file='c1_ei.csv')
     write.csv(res$c2_ai,file='c2_ai.csv')
     write.csv(res$c3_ea,file='c3_ea.csv')
