@@ -104,12 +104,12 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,swap_grp_p_cutoff=.0
     idx.cat6 <- betaLow > 0 & betaHigh < 0
 
     ##classified result
-    res <-list(c1_ei=cbind(sigOrigin$tripleMat[idx.cat1,,drop=F],betaLow=betaLow[idx.cat1],betaHigh=betaHigh[idx.cat1]),
-               c2_ai=cbind(sigOrigin$tripleMat[idx.cat2,,drop=F],betaLow=betaLow[idx.cat2],betaHigh=betaHigh[idx.cat2]),
-               c3_ea=cbind(sigOrigin$tripleMat[idx.cat3,,drop=F],betaLow=betaLow[idx.cat3],betaHigh=betaHigh[idx.cat3]),
-               c4_aa=cbind(sigOrigin$tripleMat[idx.cat4,,drop=F],betaLow=betaLow[idx.cat4],betaHigh=betaHigh[idx.cat4]),
-               c5_ia=cbind(sigOrigin$tripleMat[idx.cat5,,drop=F],betaLow=betaLow[idx.cat5],betaHigh=betaHigh[idx.cat5]),
-               c6_ii=cbind(sigOrigin$tripleMat[idx.cat6,,drop=F],betaLow=betaLow[idx.cat6],betaHigh=betaHigh[idx.cat6]))
+    res <-list(c1_ei=cbind(sigOrigin$tripleMat[idx.cat1,,drop=F],betaLow=betaLow[idx.cat1],betaLowP=sigSwap$PMat[idx.cat1,2,drop=F],betaHigh=betaHigh[idx.cat1],betHighP=sigOrigin$PMat[idx.cat1,2,drop=F]),
+               c2_ai=cbind(sigOrigin$tripleMat[idx.cat2,,drop=F],betaLow=betaLow[idx.cat2],betaLowP=sigSwap$PMat[idx.cat2,2,drop=F],betaHigh=betaHigh[idx.cat2],betHighP=sigOrigin$PMat[idx.cat2,2,drop=F]),
+               c3_ea=cbind(sigOrigin$tripleMat[idx.cat3,,drop=F],betaLow=betaLow[idx.cat3],betaLowP=sigSwap$PMat[idx.cat3,2,drop=F],betaHigh=betaHigh[idx.cat3],betHighP=sigOrigin$PMat[idx.cat3,2,drop=F]),
+               c4_aa=cbind(sigOrigin$tripleMat[idx.cat4,,drop=F],betaLow=betaLow[idx.cat4],betaLowP=sigSwap$PMat[idx.cat4,2,drop=F],betaHigh=betaHigh[idx.cat4],betHighP=sigOrigin$PMat[idx.cat4,2,drop=F]),
+               c5_ia=cbind(sigOrigin$tripleMat[idx.cat5,,drop=F],betaLow=betaLow[idx.cat5],betaLowP=sigSwap$PMat[idx.cat5,2,drop=F],betaHigh=betaHigh[idx.cat5],betHighP=sigOrigin$PMat[idx.cat5,2,drop=F]),
+               c6_ii=cbind(sigOrigin$tripleMat[idx.cat6,,drop=F],betaLow=betaLow[idx.cat6],betaLowP=sigSwap$PMat[idx.cat6,2,drop=F],betaHigh=betaHigh[idx.cat6],betHighP=sigOrigin$PMat[idx.cat6,2,drop=F]))
     write.csv(res$c1_ei,file='c1_ei.csv')
     write.csv(res$c2_ai,file='c2_ai.csv')
     write.csv(res$c3_ea,file='c3_ea.csv')
