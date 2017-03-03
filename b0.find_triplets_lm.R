@@ -1,5 +1,5 @@
 my.tri.app.lm <-
-    function(ms,ET,M.exp,E.exp,T.exp,N = 0.25,groupMin=20,
+    function(ms,ET,M.exp,E.exp,T.exp,Ngrp = 0.25,groupMin=20,
              correction="BH",p.cutoff=0.01, cores=1){
       data.E = E.exp
       data.M = M.exp
@@ -28,7 +28,7 @@ my.tri.app.lm <-
 
                 E <- MET[i,2]
                 Tg <- MET[i,3]
-                 if (!(M %in% rownames(data.M)) | 
+                 if (!(M %in% rownames(data.M)) |
                      !(E %in% rownames(data.E)) |
                      !(Tg %in% rownames(data.E))) {
                     return(paste0(M,' ',E,' ',Tg,': not found in filtered expMtrix'))
@@ -39,7 +39,7 @@ my.tri.app.lm <-
                 lncRNAexp <- data.M[ M,]
 
                 if(length(mRNAexp) != length(TFexp) | length(TFexp) != length(lncRNAexp)) stop('input of diff length')
-                cutoffs <- quantile(lncRNAexp,na.rm=T,probs=c(.25,.75))
+                cutoffs <- quantile(lncRNAexp,na.rm=T,probs=c(Ngrp,1-Ngrp))
                 low_grp <- lncRNAexp < cutoffs[1]
                 mid_grp <- lncRNAexp >= cutoffs[1] & lncRNAexp <= cutoffs[2]
                 high_grp <- lncRNAexp > cutoffs[2]
@@ -82,12 +82,12 @@ my.tri.app.lm <-
                 mRNA_highgrp_outlierIdx <- c(mrna_highgrp_outlier1,mrna_highgrp_outlier2)
 
                 ##set outliers'expression value to NA
-                if(!length(c(tf_lowgrp_outlierIdx,tf_highgrp_outlierIdx,tf_midgrp_outlierIdx))==0) {
-                TFexp[ c(tf_lowgrp_outlierIdx,tf_highgrp_outlierIdx,tf_midgrp_outlierIdx) ] <- NA
+                if(!length(unique(c(tf_lowgrp_outlierIdx,tf_highgrp_outlierIdx,tf_midgrp_outlierIdx)))==0) {
+                TFexp[ unique( c(tf_lowgrp_outlierIdx,tf_highgrp_outlierIdx,tf_midgrp_outlierIdx )) ] <- NA
                 }
-                
-                if(!length(c(mRNA_lowgrp_outlierIdx,mRNA_highgrp_outlierIdx,mRNA_midgrp_outlierIdx))==0) {
-                mRNAexp[ c(mRNA_lowgrp_outlierIdx,mRNA_highgrp_outlierIdx,mRNA_midgrp_outlierIdx) ] <- NA
+
+                if(!length(unique(c(mRNA_lowgrp_outlierIdx,mRNA_highgrp_outlierIdx,mRNA_midgrp_outlierIdx)))==0) {
+                mRNAexp[ unique(c(mRNA_lowgrp_outlierIdx,mRNA_highgrp_outlierIdx,mRNA_midgrp_outlierIdx)) ] <- NA
                 }
                 ## number of available values in cleaned data within each group:
                 nlowgrp <- sum(!is.na(TFexp[low_grp] + mRNAexp[low_grp]))
