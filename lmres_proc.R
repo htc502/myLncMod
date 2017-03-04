@@ -1,4 +1,4 @@
-lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata) {
+lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,Ngrp=.25) {
     setwd(filedir)
     resFnames = list.files(path=filedir,pattern='lmres.*.rda')
     if(length(resFnames) == 0) stop('data files not found')
@@ -61,9 +61,9 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata) {
     ## in order to classify the triples into six categories, we need to test whether it is significant for TF and target in low grp,
 
     load(RNAseqdata)
-    source('/data/ghan/AD_GBM_comparison/myLncMod/b0.find_triplets_lm_swap_highlow_grp.R', encoding = 'UTF-8')
-    swapres <- my.tri.app.lm.swap.grp(TripleMat1,M.exp = tmpM.exp,E.exp = tmpE.exp,T.exp=tmpE.exp ,cores=4)
-    source('/data/ghan/AD_GBM_comparison/myLncMod/parse_lmRes.R', encoding = 'UTF-8')
+    source('/data/ghan/AD_GBM_comparison/AD_RNAseq_AMP_AD/get_rpkm/myLncMod/b0.find_triplets_lm_swap_highlow_grp.R', encoding = 'UTF-8')
+    swapres <- my.tri.app.lm.swap.grp(TripleMat1,M.exp = tmpM.exp,E.exp = tmpE.exp,T.exp=tmpE.exp ,cores=4,Ngrp=Ngrp)
+    source('/data/ghan/AD_GBM_comparison/AD_RNAseq_AMP_AD/get_rpkm/myLncMod/parse_lmRes.R', encoding = 'UTF-8')
     parse_lmRes(swapres) -> swapres1
     save(swapres,swapres1,file='swith_high_low_group_lmres.rda')
 
