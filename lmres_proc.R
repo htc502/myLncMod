@@ -99,7 +99,7 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,Ngrp=.25) {
                c4_aa=cbind(lmRes_ref_higgrp$tripleMat[idx.cat4,,drop=F],betaLow=betaLow[idx.cat4],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat4,2,drop=F],betaHigh=betaHigh[idx.cat4],betaHighP=lmRes_ref_higgrp$PMat[idx.cat4,2,drop=F]),
                c5_ia=cbind(lmRes_ref_higgrp$tripleMat[idx.cat5,,drop=F],betaLow=betaLow[idx.cat5],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat5,2,drop=F],betaHigh=betaHigh[idx.cat5],betaHighP=lmRes_ref_higgrp$PMat[idx.cat5,2,drop=F]),
                c6_ii=cbind(lmRes_ref_higgrp$tripleMat[idx.cat6,,drop=F],betaLow=betaLow[idx.cat6],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat6,2,drop=F],betaHigh=betaHigh[idx.cat6],betaHighP=lmRes_ref_higgrp$PMat[idx.cat6,2,drop=F]))
-    res <- lappy(res0, function(e) {colnames(e) <- c("lncRNA","TF","mRNA","betaLow","p","betaHigh","p");e})
+    res <- lapply(res0, function(e) {colnames(e) <- c("lncRNA","TF","mRNA","betaLow","p","betaHigh","p");e})
     write.csv(res$c1_ei,file='c1_ei.csv')
     write.csv(res$c2_ai,file='c2_ai.csv')
     write.csv(res$c3_ea,file='c3_ea.csv')
