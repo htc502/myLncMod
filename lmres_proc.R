@@ -7,7 +7,9 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,Ngrp=.25) {
     nbad = 0
     ngood = 0
     nsig = 0
+	print('get Triple summary table')
     for(i in 1:length(resFnames)) {
+	print(i)
         load(resFnames[i])
         tmplmres = lmres;rm(lmres)
         ibad =  nrow(tmplmres$bad)
@@ -27,6 +29,7 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,Ngrp=.25) {
     BetaMat <- c()
     TripleMat <- c()
     outlierMat <- c()
+	print('combine result')
     for(i in 1:length(resFnames) ) {
         print(i)
         load(resFnames[i])
@@ -60,6 +63,7 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,Ngrp=.25) {
     outlier1 = outlierMat[ idx, ]
     ## in order to classify the triples into six categories, we need to test whether it is significant for TF and target in low grp,
 
+	print('calculate beta in low group')
     load(RNAseqdata)
     source('/data/ghan/AD_GBM_comparison/AD_RNAseq_AMP_AD/get_rpkm/myLncMod/b0.find_triplets_lm_swap_highlow_grp.R', encoding = 'UTF-8')
     swapres <- my.tri.app.lm.swap.grp(TripleMat1,M.exp = tmpM.exp,E.exp = tmpE.exp,T.exp=tmpE.exp ,cores=4,Ngrp=Ngrp)
@@ -76,6 +80,8 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,Ngrp=.25) {
     ##category 1: enhanced inhibition
     ## low  high
     ##  - -> --
+
+	print('identify six categoires')
     betaLow <- lmRes_ref_lowgrp$BetaMat[,2]
     betaHigh <- lmRes_ref_higgrp$BetaMat[,2]
 
@@ -100,6 +106,7 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,Ngrp=.25) {
                c5_ia=cbind(lmRes_ref_higgrp$tripleMat[idx.cat5,,drop=F],betaLow=betaLow[idx.cat5],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat5,2,drop=F],betaHigh=betaHigh[idx.cat5],betaHighP=lmRes_ref_higgrp$PMat[idx.cat5,2,drop=F]),
                c6_ii=cbind(lmRes_ref_higgrp$tripleMat[idx.cat6,,drop=F],betaLow=betaLow[idx.cat6],betaLowP=lmRes_ref_lowgrp$PMat[idx.cat6,2,drop=F],betaHigh=betaHigh[idx.cat6],betaHighP=lmRes_ref_higgrp$PMat[idx.cat6,2,drop=F]))
     res <- lapply(res0, function(e) {colnames(e) <- c("lncRNA","TF","mRNA","betaLow","p","betaHigh","p");e})
+	print('output six categoires')
     write.csv(res$c1_ei,file='c1_ei.csv')
     write.csv(res$c2_ai,file='c2_ai.csv')
     write.csv(res$c3_ea,file='c3_ea.csv')
