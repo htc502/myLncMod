@@ -1,6 +1,6 @@
 lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,Ngrp=.25) {
     setwd(filedir)
-    resFnames = list.files(path=filedir,pattern='lmres.*.rda')
+    resFnames = list.files(path=filedir,pattern='lmres_.*.rda')
     if(length(resFnames) == 0) stop('data files not found')
     stats = c()
     ntotal = 0
@@ -113,5 +113,5 @@ lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,Ngrp=.25) {
     write.csv(res$c4_aa,file='c4_aa.csv')
     write.csv(res$c5_ia,file='c5_ia.csv')
     write.csv(res$c6_ii,file='c6_ii.csv')
-    save(sigOrigin,file='significant_triples.rda')
+    save(lmRes_ref_higgrp,lmRes_ref_lowgrp,file='significant_triples.rda')
 }
