@@ -1,6 +1,7 @@
 my.tri.app.lm <-
     function(ms,ET,M.exp,E.exp,T.exp,Ngrp = 0.25,groupMin=20,
              correction="BH",p.cutoff=0.01, cores=1){
+			 if(!(Ngrp > 0 & Ngrp <=0.5)) stop('Ngrp should be (0,0.5]')
       data.E = E.exp
       data.M = M.exp
       data.T = T.exp
@@ -15,10 +16,6 @@ my.tri.app.lm <-
         if(dim(ET)[1]==0){
             return('no effector-Target pairs,return empty result')
         } else {
-
-            E2T <- tapply(as.character(ET[,2]),as.character(ET[,1]),function(e) unique(e))
-            E2T_E <- names(E2T)
-            ##M_E <- expand.grid(ms,E2T_E)
             MET0 <- expand.grid(1:length(ms),1:nrow(ET))
             MET <- data.frame(M=as.character(ms[MET0[,1]]),E=as.character(ET[MET0[,2],1]),
                          Tg=as.character(ET[MET0[,2],2]),stringsAsFactors=F)
@@ -57,13 +54,13 @@ my.tri.app.lm <-
                 })
                 which((TFexp > TF_extremValue$low$upper) & low_grp) -> tf_lowgrp_outlier1
                 which((TFexp < TF_extremValue$low$lower) & low_grp) -> tf_lowgrp_outlier2
-                tf_lowgrp_outlierIdx <- c(tf_lowgrp_outlier1,tf_lowgrp_outlier2)
+                tf_lowgrp_outlierIdx <- unique(c(tf_lowgrp_outlier1,tf_lowgrp_outlier2))
                 which((TFexp > TF_extremValue$mid$upper) & mid_grp) -> tf_midgrp_outlier1
                 which((TFexp < TF_extremValue$mid$lower) & mid_grp) -> tf_midgrp_outlier2
-                tf_midgrp_outlierIdx <- c(tf_midgrp_outlier1,tf_midgrp_outlier2)
+                tf_midgrp_outlierIdx <- unique(c(tf_midgrp_outlier1,tf_midgrp_outlier2))
                 which((TFexp > TF_extremValue$high$upper) & high_grp) -> tf_highgrp_outlier1
                 which((TFexp < TF_extremValue$high$lower) & high_grp) -> tf_highgrp_outlier2
-                tf_highgrp_outlierIdx <- c(tf_highgrp_outlier1,tf_highgrp_outlier2)
+                tf_highgrp_outlierIdx <- unique(c(tf_highgrp_outlier1,tf_highgrp_outlier2))
 
                 mRNA_extremValue <- tapply(mRNAexp, grp, function(e) {
                     IQR(e,na.rm=T)->iqr
@@ -73,13 +70,13 @@ my.tri.app.lm <-
                 })
                 which((mRNAexp > mRNA_extremValue$low$upper) & low_grp) -> mrna_lowgrp_outlier1
                 which((mRNAexp < mRNA_extremValue$low$lower) & low_grp) -> mrna_lowgrp_outlier2
-                mRNA_lowgrp_outlierIdx <- c(mrna_lowgrp_outlier1,mrna_lowgrp_outlier2)
+                mRNA_lowgrp_outlierIdx <- unique(c(mrna_lowgrp_outlier1,mrna_lowgrp_outlier2))
                 which((mRNAexp > mRNA_extremValue$mid$upper) & mid_grp) -> mrna_midgrp_outlier1
                 which((mRNAexp < mRNA_extremValue$mid$lower) & mid_grp) -> mrna_midgrp_outlier2
-                mRNA_midgrp_outlierIdx <- c(mrna_midgrp_outlier1,mrna_midgrp_outlier2)
+                mRNA_midgrp_outlierIdx <- unique(c(mrna_midgrp_outlier1,mrna_midgrp_outlier2))
                 which((mRNAexp > mRNA_extremValue$high$upper) & high_grp) -> mrna_highgrp_outlier1
                 which((mRNAexp < mRNA_extremValue$high$lower) & high_grp) -> mrna_highgrp_outlier2
-                mRNA_highgrp_outlierIdx <- c(mrna_highgrp_outlier1,mrna_highgrp_outlier2)
+                mRNA_highgrp_outlierIdx <- unique(c(mrna_highgrp_outlier1,mrna_highgrp_outlier2))
 
                 ##set outliers'expression value to NA
                 if(!length(unique(c(tf_lowgrp_outlierIdx,tf_highgrp_outlierIdx,tf_midgrp_outlierIdx)))==0) {
