@@ -1,6 +1,6 @@
 
 
-triPlot <- function(m,e,tg,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)',points.cex=.8,groupMin=20) {
+triPlot <- function(m,e,tg,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)',points.cex=.8,Ngrp=.25,groupMin=20) {
   
   mRNAexp0 <- tg
   TFexp0 <- e
@@ -11,7 +11,7 @@ triPlot <- function(m,e,tg,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)'
   lncRNAexp=lncRNAexp0
   
   if(length(mRNAexp) != length(TFexp) | length(TFexp) != length(lncRNAexp)) stop('input of diff length')
-  cutoffs <- quantile(lncRNAexp,na.rm=T,probs=c(.25,.75))
+  cutoffs <- quantile(lncRNAexp,na.rm=T,probs=c(Ngrp,1-Ngrp))
   low_grp <- lncRNAexp < cutoffs[1]
   mid_grp <- lncRNAexp >= cutoffs[1] & lncRNAexp <= cutoffs[2]
   high_grp <- lncRNAexp > cutoffs[2]
