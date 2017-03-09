@@ -14,7 +14,7 @@ zero2na <- function(mtr,zero=log2(0.001)) {
     print('# of genes and samples:')
     print(dim(mtr))
     print(paste0('rm ', sum(nacount >= ncol(mtr)*.5), 'genes'))
-    mtr1 <- mtr[ nacount < ncol(mtr)*.5, ]
+    mtr1 <- mtr[ nacount < ncol(mtr)*.5,,drop=F ]
     mtr1
 }
 
