@@ -1,6 +1,7 @@
 
 
-triPlot <- function(m,e,tg,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)',points.cex=.8,Ngrp=.25,groupMin=20) {
+triPlot <- function(m,e,tg,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)',points.cex=.8,Ngrp=.25,groupMin=20,
+                   labels=NULL) {
   
   mRNAexp0 <- tg
   TFexp0 <- e
@@ -97,7 +98,9 @@ triPlot <- function(m,e,tg,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)'
     plot(dat$TF,dat$gene,col=cols,pch=20,cex=points.cex,
          xlab='TF expression',
          ylab='Gene expression')
-    
+    if(!is.null(labels)) {
+      text(dat$TF,dat$gene,labels=labels,cex=points.cex)
+      }
    
     if(length(outlier$TF) != 0) {
       outlierdat <- subset(dat,rownames(dat) %in% outlier$TF)
