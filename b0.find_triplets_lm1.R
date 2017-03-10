@@ -108,7 +108,7 @@ my.tri.app.lm <-
 				
 				##swap group
 				grp1 = factor(as.character(grp),levels=c('low','mid','high'))
-				model1 <- lm( mRNAexp ~ TFexp + grp + TFexp:grp)
+				model1 <- lm( mRNAexp ~ TFexp + grp1 + TFexp:grp1)
 				model1_coef <- coefficients(summary(model1))
                 if(!(nrow(model1_coef)==6 & ncol(model1_coef)==4)) {
                     return(paste0(M,' ',E,' ',Tg,': the model dimension is not proper in swap model, some group may have empty values'))
