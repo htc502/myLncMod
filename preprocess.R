@@ -18,7 +18,7 @@ zero2na <- function(mtr,zero=log2(0.001)) {
     mtr1
 }
 
-rmOutlierSamples <- function(mtr) {
+rmOutlierSamples <- function(mtr,plot=T) {
     ##Here we define outlier as value > q3+1.5*IQR or < q1-1.5*iqr
     t( apply(mtr,1,function(e) {
         iqr <- IQR(e, na.rm=T)
@@ -27,10 +27,11 @@ rmOutlierSamples <- function(mtr) {
         idx2 <- e < q13[1] - 1.5*iqr
         sum(idx1|idx2)
     }) ) -> nbad
-
+if(plot) {
     pdf('rmOutlierSamples.pdf')
     hist(nbad,breaks=100,xlab='Number of samples')
     dev.off()
+    }
 
     t( apply(mtr,1,function(e) {
         iqr <- IQR(e, na.rm=T)
