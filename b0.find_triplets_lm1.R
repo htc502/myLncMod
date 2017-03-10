@@ -114,7 +114,7 @@ my.tri.app.lm <-
                     return(paste0(M,' ',E,' ',Tg,': the model dimension is not proper in swap model, some group may have empty values'))
                 }
                 p1 <- model1_coef[,4]
-                beta1 <- model_coef1[,1]
+                beta1 <- model1_coef[,1]
                 names(p1) <- names(beta1) <- rownames(model1_coef)
 				
 				
