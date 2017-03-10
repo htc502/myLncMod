@@ -98,7 +98,7 @@ triPlot <- function(m,e,tg,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)'
     plot(dat$TF,dat$gene,col=cols,pch=20,cex=points.cex,
          xlab='TF expression',
          ylab='Gene expression')
-    if(!is.null(labels)) {
+    if(length(labels) != 0) {
       text(dat$TF,dat$gene,labels=labels,cex=points.cex)
       }
    
