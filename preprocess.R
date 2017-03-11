@@ -65,13 +65,14 @@ rmlowCVGenes <- function(mtr,cv_cutoff,cv=NULL) {
     mtr1
 }
 
-PCAplot <- function(mtr,label=NULL,col=NULL) {
+PCAplot <- function(mtr,label=NULL,col=NULL,fname=NULL) {
     ##to check there are substurcture or not...
     tmp <- t(mtr)
     tmp[ is.na(tmp) ] <- 0
     pca.res <- prcomp(tmp)
     if(is.null(col)) col='black'
-    pdf('PCAplot.pdf')
+    if(is.null(fname)) fname='PCAplot.pdf'
+    pdf(fname)
     plot(pca.res)
     plot(pca.res$x[,1:2],xlab='PC1',
          ylab='PC2',
