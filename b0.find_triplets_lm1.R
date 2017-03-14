@@ -40,12 +40,13 @@ my.tri.app.lm <-
                 low_grp <- lncRNAexp < cutoffs[1]
                 mid_grp <- lncRNAexp >= cutoffs[1] & lncRNAexp <= cutoffs[2]
                 high_grp <- lncRNAexp > cutoffs[2]
-                grp <- rep('mid',length=length(mRNAexp))
+				grp <- rep(NA,length=length(mRNAexp))
                 grp[low_grp] <- 'low'
+				grp[mid_grp] <- 'mid'
                 grp[high_grp] <- 'high'
-                grp <- as.factor(grp) #used for lm
+                grp <- factor(grp,levels=c('high','mid','low')) #used for lm
 
-                ##remove outliers within each group
+                ##detect outliers within each group
                 TF_extremValue <- tapply(TFexp, grp, function(e) {
                     IQR(e,na.rm=T)->iqr
                     q13 <- quantile(e,na.rm=T,probs=c(.25,.75))
