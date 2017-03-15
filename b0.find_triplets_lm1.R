@@ -1,5 +1,10 @@
 my.tri.app.lm <-
-    function(ms,ET,M.exp,E.exp,T.exp,Ngrp = 0.25,
+    function(
+	    ##about the result:
+	    ##grp is the group based on lncRNA expression only
+	    ##grp1 is the group which takes TF and gene expression into consideration
+	    
+	    ms,ET,M.exp,E.exp,T.exp,Ngrp = 0.25,
              correction="BH",p.cutoff=0.01, cores=1){
 			 if(!(Ngrp > 0 & Ngrp <=0.5)) stop('Ngrp should be (0,0.5]')
       data.E = E.exp
@@ -88,8 +93,11 @@ my.tri.app.lm <-
                 mRNAexp[ unique(c(mRNA_lowgrp_outlierIdx,mRNA_highgrp_outlierIdx,mRNA_midgrp_outlierIdx)) ] <- NA
                 }
                 ## number of available values in cleaned data within each group:
+		idxlowgrp <- which(!is.na(TFexp[low_grp] + mRNAexp[low_grp]))
                 nlowgrp <- sum(!is.na(TFexp[low_grp] + mRNAexp[low_grp]))
+		idxhighgrp <- which(!is.na(TFexp[high_grp] + mRNAexp[high_grp]))
                 nhighgrp <- sum(!is.na(TFexp[high_grp] + mRNAexp[high_grp]))
+		idxmidgrp <- which(!is.na(TFexp[mid_grp] + mRNAexp[mid_grp]))
                 nmidgrp <- sum(!is.na(TFexp[mid_grp] + mRNAexp[mid_grp]))
 
                 if(nlowgrp < 2 |
@@ -123,7 +131,10 @@ my.tri.app.lm <-
                              outlier=list(TF=list(low=tf_lowgrp_outlierIdx,high=tf_highgrp_outlierIdx,mid=tf_midgrp_outlierIdx),
                                           mRNA=list(low=mRNA_lowgrp_outlierIdx,high=mRNA_highgrp_outlierIdx,mid=mRNA_midgrp_outlierIdx)),
 							groupInfo=list(ngrp=list(low=nlowgrp,mid=nmidgrp,high=nhighgrp),
-											grp=grp),
+											grp=grp,
+								      			grp1=list(low=idxlowgrp,
+												 mid=idxmidgrp,
+												 high=idxhighgrp)),
 							beta_swap=beta1,p_swap=p1)
                 return(resi)
             }
