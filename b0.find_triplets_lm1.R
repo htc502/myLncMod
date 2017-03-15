@@ -93,11 +93,11 @@ my.tri.app.lm <-
                 mRNAexp[ unique(c(mRNA_lowgrp_outlierIdx,mRNA_highgrp_outlierIdx,mRNA_midgrp_outlierIdx)) ] <- NA
                 }
                 ## number of available values in cleaned data within each group:
-		idxlowgrp <- which(!is.na(TFexp[low_grp] + mRNAexp[low_grp]))
+		idxlowgrp <- which(!(is.na(TFexp) | is.na(mRNAexp)) & low_grp )
                 nlowgrp <- sum(!is.na(TFexp[low_grp] + mRNAexp[low_grp]))
-		idxhighgrp <- which(!is.na(TFexp[high_grp] + mRNAexp[high_grp]))
+		idxhighgrp <- which(!(is.na(TFexp) | is.na(mRNAexp)) & high_grp )
                 nhighgrp <- sum(!is.na(TFexp[high_grp] + mRNAexp[high_grp]))
-		idxmidgrp <- which(!is.na(TFexp[mid_grp] + mRNAexp[mid_grp]))
+		idxmidgrp <- which(!(is.na(TFexp) | is.na(mRNAexp)) & mid_grp )
                 nmidgrp <- sum(!is.na(TFexp[mid_grp] + mRNAexp[mid_grp]))
 
                 if(nlowgrp < 2 |
