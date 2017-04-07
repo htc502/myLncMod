@@ -29,9 +29,9 @@ target=tmpET[i,2]
 library(parallel)
 
   mclapply(1:nrow(tmpET), lm_e_t, mc.cores=cores) -> lmres
-  lmres <- t(lmres)
-  padj <- p.adjust(as.numeric(lmres[, 5]), 'BH')
-  lmres <- cbind(lmres, fdr = padj)
-  colnames(lmres) <- c('tf','target','r2','beta','pvalue','fdr')
-  lmres
+  lmres1 <- do.call('rbind',lmres)
+  padj <- p.adjust(as.numeric(lmres1[, 5]), 'BH')
+  lmres1 <- cbind(lmres1, fdr = padj)
+  colnames(lmres1) <- c('tf','target','r2','beta','pvalue','fdr')
+  lmres1
 }
