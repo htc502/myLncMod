@@ -4,7 +4,8 @@ getContext_TFtarget <- function(tmpE.exp, tf_target) {
   tmpET0 <- as.data.frame(mytf_target2)
   idx1 <- tmpET0[, 1] %in% rownames(tmpE.exp)
   idx2 <- tmpET0[, 2] %in% rownames(tmpE.exp)
-  tmpET <- tmpET0[idx1 & idx2,]
+  idx3 <- tmpET0[,1] != tmpET0[,2]
+  tmpET <- tmpET0[idx1 & idx2 & idx3,]
   print(paste0('# TFs in expressiodat:', length(unique(as.character(tmpET[,1])))))
   print(paste0('# Targets in expressiodat:', length(unique(as.character(tmpET[,2])))))
   lm_e_t <- function(tf, target) {
