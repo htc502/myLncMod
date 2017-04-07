@@ -1,4 +1,4 @@
-getContext_TFtarget <- function(tmpE.exp, tf_target) {
+getContext_TFtarget <- function(tmpE.exp, tf_target,cores=6) {
   mytf_target2 = tf_target
   tmpT.exp <- tmpE.exp
   tmpET0 <- as.matrix(mytf_target2)
@@ -9,7 +9,10 @@ getContext_TFtarget <- function(tmpE.exp, tf_target) {
   tmpET <- tmpET0[idx1 & idx2 & idx3,]
   print(paste0('# TFs in expressiodat:', length(unique(as.character(tmpET[,1])))))
   print(paste0('# Targets in expressiodat:', length(unique(as.character(tmpET[,2])))))
-  lm_e_t <- function(tf, target) {
+##  lm_e_t <- function(tf, target) {
+  lm_e_t <- function(i) {
+tf=tmpET[i,1]
+target=tmpET[i,2]
     exp_tf <- tmpE.exp[tf, ]
     exp_mrna <- tmpE.exp[target, ]
     lm.tmp <- lm(exp_mrna ~ exp_tf)
@@ -22,12 +25,10 @@ getContext_TFtarget <- function(tmpE.exp, tf_target) {
     )
     res.tmp
   }
-  apply(tmpET, 1, function(et) {
-    tf <- as.character(et[1])
-    mrna <- as.character(et[2])
-    tmpres <- lm_e_t(tf, mrna)
-    tmpres
-  }) -> lmres
+  ##apply(tmpET, 1, function(et) {
+library(parallel)
+
+  mclapply(1:nrow(tmpET), lm_e_t, mc.cores=cores) -> lmres
   lmres <- t(lmres)
   padj <- p.adjust(as.numeric(lmres[, 5]), 'BH')
   lmres <- cbind(lmres, fdr = padj)
