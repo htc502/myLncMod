@@ -1,7 +1,8 @@
 getContext_TFtarget <- function(tmpE.exp, tf_target) {
   mytf_target2 = tf_target
   tmpT.exp <- tmpE.exp
-  tmpET0 <- as.data.frame(mytf_target2)
+  tmpET0 <- as.matrix(mytf_target2)
+  mode(tmpET0) <- 'character'
   idx1 <- tmpET0[, 1] %in% rownames(tmpE.exp)
   idx2 <- tmpET0[, 2] %in% rownames(tmpE.exp)
   idx3 <- tmpET0[,1] != tmpET0[,2]
