@@ -164,7 +164,7 @@ tmp=as.data.frame(cbind(Lnc=m,TF=e,targetGene=tg))
 if(!is.null(labels)) {
 tmp = cbind(tmp,labels=labels)
 }
-midpoint=median(tmp$Lnc)
+midpoint=median(tmp$Lnc,na.rm=T)
 pdf(fname)
 gp=ggplot(tmp,aes(e,tg)) + geom_point(aes(colour=m)) + scale_colour_gradient2(low = "#d7191c",mid='#ffffbf',high='#1a9641',midpoint=midpoint) 
 if(!is.null(labels)) {
