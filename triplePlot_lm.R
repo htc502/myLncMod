@@ -168,6 +168,7 @@ pdf(fname)
 gp=ggplot(tmp,aes(e,tg)) + geom_point(aes(colour=m)) + scale_colour_gradient2(low = "#d7191c",mid='#ffffbf',high='#1a9641',midpoint=midpoint) 
 if(!is.null(labels)) {
 gp = gp + geom_text(aes(label=tmp$labels))
+}
 print(gp)
 dev.off()
 }
