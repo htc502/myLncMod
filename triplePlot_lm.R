@@ -154,3 +154,20 @@ rownames(dat0) <- names(lncRNAexp)
 }
 
 ##test it
+
+##triplePlot using ggplot2
+
+triPlot_ggplot2 <- function(m,e,tg,fname='tmp.pdf',xlab='TF expression',ylab='targetGene expression',
+                   labels=NULL) {
+if(!require(ggplot2)) stop('error loading ggplot2')
+tmp=as.data.frame(cbind(Lnc=m,TF=e,targetGene=tg))
+if(!is.null(labels)) {
+tmp = cbind(tmp,labels=labels)
+midpoint=median(tmp$Lnc)
+pdf(fname)
+gp=ggplot(tmp,aes(e,tg)) + geom_point(aes(colour=m)) + scale_colour_gradient2(low = "#d7191c",mid='#ffffbf',high='#1a9641',midpoint=midpoint) 
+if(!is.null(labels)) {
+gp = gp + geom_text(aes(label=tmp$labels))
+print(gp)
+dev.off()
+}
