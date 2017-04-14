@@ -173,3 +173,31 @@ gp = gp + geom_text(aes(label=tmp$labels))
 print(gp)
 dev.off()
 }
+
+##multiple genes
+triPlot_ggplot2_mg <- function(m,e,tgs,fname='tmp.pdf',xlab='TF expression',ylab='targetGene expression',
+                   labels=NULL,label.size=5) {
+if(!require(ggplot2)) stop('error loading ggplot2')
+tmp =c()
+for(i in 1:nrow(tgs)) {
+tmpi=as.data.frame(cbind(Lnc=m,TF=e,tg=rep(rownames(tgs)[i],length(m)),targetGene=tgs[i,]))
+tmp=rbind(tmp,tmpi)
+}
+colnames(tmp) = c('Lnc','TF','GeneName','GeneExp')
+tmp$Lnc=as.numeric(as.character(tmp$Lnc))
+tmp$TF=as.numeric(as.character(tmp$TF))
+tmp$GeneExp=as.numeric(as.character(tmp$GeneExp))
+tmp$GeneName=as.factor(as.character(tmp$GeneName))
+if(!is.null(labels)) {
+tmp = cbind(tmp,labels=labels)
+}
+midpoint=median(tmp$Lnc,na.rm=T)
+pdf(fname)
+gp=ggplot(tmp,aes(TF,GeneExp)) + geom_point(aes(colour=Lnc)) + scale_colour_gradient2(high= "#d7191c",mid='#ffffbf',low='#1a9641',midpoint=midpoint) 
+gp=gp+facet_wrap(~GeneName)
+if(!is.null(labels)) {
+gp = gp + geom_text(aes(label=tmp$labels),size=label.size)
+}
+print(gp)
+dev.off()
+}
