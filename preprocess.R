@@ -7,14 +7,18 @@ PlotGeneExpDist <- function(mtr) {
     med
 }
 
-zero2na <- function(mtr,zero=log2(0.001)) {
+zero2na <- function(mtr,zero=log2(0.001),rmLowexp=F) {
     ##fill zero expression value with NA, those NA values will not be taken into consideration in the screening step
     mtr[ mtr <= zero ] <- NA
+    if(rmLowexp) {
     apply(mtr, 1, function(e) sum(is.na(e))) -> nacount
     print('# of genes and samples:')
     print(dim(mtr))
     print(paste0('rm ', sum(nacount >= ncol(mtr)*.5), 'genes'))
     mtr1 <- mtr[ nacount < ncol(mtr)*.5,,drop=F ]
+        } else {
+        mtr1 = mtr
+        }
     mtr1
 }
 
