@@ -29,7 +29,7 @@ parse_lmRes <- function(lmres, getswap=T) {
                                                              paste(e$outlier$mRNA$low,collapse = ';'),
                                                              paste(e$outlier$mRNA$mid,collapse = ';'),
                                                              paste(e$outlier$mRNA$high,collapse = ';'))))
-  NgrpSample <- do.call('rbind',lapply(ilmres, function(e) {tmp = unlist(e$groupInfo$ngrp);names(tmp) = names(e$groupInfo$ngrp);tmp}
+  NgrpSample <- do.call('rbind',lapply(ilmres, function(e) {tmp = unlist(e$groupInfo$ngrp);names(tmp) = names(e$groupInfo$ngrp);tmp}))
   res <- list(PMat=PMat,
               PMat_swap=PMat_swap,
               BetaMat=BetaMat,
