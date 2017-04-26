@@ -191,7 +191,7 @@ tmp$GeneName=as.factor(as.character(tmp$GeneName))
 if(!is.null(labels)) {
 tmp = cbind(tmp,labels=labels)
 }
-midpoint=median(tmp$Lnc,na.rm=T)
+midpoint=median(tmp$`LncRNA(log2RPKM)`,na.rm=T)
 pdf(fname)
 gp=ggplot(tmp,aes(`TF(log2RPKM)`,`Gene(log2RPKM)`)) + geom_point(aes(colour=`LncRNA(log2RPKM)`)) + scale_colour_gradient2(high= "#d7191c",mid='#ffffbf',low='#1a9641',midpoint=midpoint) 
 gp=gp+facet_wrap(~GeneName)
