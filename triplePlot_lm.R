@@ -160,13 +160,13 @@ rownames(dat0) <- names(lncRNAexp)
 triPlot_ggplot2 <- function(m,e,tg,fname='tmp.pdf',xlab='TF expression',ylab='targetGene expression',
                    labels=NULL) {
 if(!require(ggplot2)) stop('error loading ggplot2')
-tmp=as.data.frame(cbind(Lnc=m,TF=e,targetGene=tg))
+tmp=as.data.frame(cbind(`LncRNA(log2RPKM)`=m,`TF(log2RPKM)`=e,`Gene(log2RPKM)`=tg))
 if(!is.null(labels)) {
 tmp = cbind(tmp,labels=labels)
 }
-midpoint=median(tmp$Lnc,na.rm=T)
+midpoint=median(tmp$`LncRNA(log2RPKM)`,na.rm=T)
 pdf(fname)
-gp=ggplot(tmp,aes(e,tg)) + geom_point(aes(colour=m)) + scale_colour_gradient2(low = "#d7191c",mid='#ffffbf',high='#1a9641',midpoint=midpoint) 
+gp=ggplot(tmp,aes(`TF(log2RPKM)`,`Gene(log2RPKM)`)) + geom_point(aes(colour=`LncRNA(log2RPKM)`)) + scale_colour_gradient2(low = "#d7191c",mid='#ffffbf',high='#1a9641',midpoint=midpoint) 
 if(!is.null(labels)) {
 gp = gp + geom_text(aes(label=tmp$labels))
 }
@@ -180,20 +180,20 @@ triPlot_ggplot2_mg <- function(m,e,tgs,fname='tmp.pdf',xlab='TF expression',ylab
 if(!require(ggplot2)) stop('error loading ggplot2')
 tmp =c()
 for(i in 1:nrow(tgs)) {
-tmpi=as.data.frame(cbind(Lnc=m,TF=e,tg=rep(rownames(tgs)[i],length(m)),targetGene=tgs[i,]))
+tmpi=as.data.frame(cbind(`LncRNA(log2RPKM)`=m,`TF(log2RPKM)`=e,GeneName=rep(rownames(tgs)[i],length(m)),`Gene(log2RPKM)`=tgs[i,]))
 tmp=rbind(tmp,tmpi)
 }
-colnames(tmp) = c('Lnc','TF','GeneName','GeneExp')
-tmp$Lnc=as.numeric(as.character(tmp$Lnc))
-tmp$TF=as.numeric(as.character(tmp$TF))
-tmp$GeneExp=as.numeric(as.character(tmp$GeneExp))
+#colnames(tmp) = c('Lnc','TF','GeneName','GeneExp')
+tmp$`LncRNA(log2RPKM)`=as.numeric(as.character(tmp$`LncRNA(log2RPKM)`))
+tmp$`TF(log2RPKM)`=as.numeric(as.character(tmp$`TF(log2RPKM)`))
+tmp$`Gene(log2RPKM)`=as.numeric(as.character(tmp$`Gene(log2RPKM)`))
 tmp$GeneName=as.factor(as.character(tmp$GeneName))
 if(!is.null(labels)) {
 tmp = cbind(tmp,labels=labels)
 }
-midpoint=median(tmp$Lnc,na.rm=T)
+midpoint=median(tmp$`LncRNA(log2RPKM)`,na.rm=T)
 pdf(fname)
-gp=ggplot(tmp,aes(TF,GeneExp)) + geom_point(aes(colour=Lnc),size=point.size) + scale_colour_gradient2(high= "#d7191c",mid='#ffffbf',low='#1a9641',midpoint=midpoint) 
+gp=ggplot(tmp,aes(`TF(log2RPKM)`,`Gene(log2RPKM)`)) + geom_point(aes(colour=`LncRNA(log2RPKM)`),size=point.size) + scale_colour_gradient2(high= "#d7191c",mid='#ffffbf',low='#1a9641',midpoint=midpoint) 
 gp=gp+facet_wrap(~GeneName)
 if(!is.null(labels)) {
 gp = gp + geom_text(aes(label=tmp$labels),size=label.size)
