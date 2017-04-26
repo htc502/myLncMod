@@ -176,7 +176,7 @@ dev.off()
 
 ##multiple genes
 triPlot_ggplot2_mg <- function(m,e,tgs,fname='tmp.pdf',xlab='TF expression',ylab='targetGene expression',
-                   labels=NULL,label.size=5) {
+                   labels=NULL,label.size=5,point.size=1) {
 if(!require(ggplot2)) stop('error loading ggplot2')
 tmp =c()
 for(i in 1:nrow(tgs)) {
@@ -193,7 +193,7 @@ tmp = cbind(tmp,labels=labels)
 }
 midpoint=median(tmp$Lnc,na.rm=T)
 pdf(fname)
-gp=ggplot(tmp,aes(TF,GeneExp)) + geom_point(aes(colour=Lnc)) + scale_colour_gradient2(high= "#d7191c",mid='#ffffbf',low='#1a9641',midpoint=midpoint) 
+gp=ggplot(tmp,aes(TF,GeneExp)) + geom_point(aes(colour=Lnc),size=point.size) + scale_colour_gradient2(high= "#d7191c",mid='#ffffbf',low='#1a9641',midpoint=midpoint) 
 gp=gp+facet_wrap(~GeneName)
 if(!is.null(labels)) {
 gp = gp + geom_text(aes(label=tmp$labels),size=label.size)
