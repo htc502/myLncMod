@@ -176,7 +176,7 @@ dev.off()
 
 ##multiple genes
 triPlot_ggplot2_mg <- function(m,e,tgs,fname='tmp.pdf',xlab='TF expression',ylab='targetGene expression',
-                   labels=NULL,label.size=5,point.size=1) {
+                   labels=NULL,label.size=5,point.size=1,plot=T) {
 if(!require(ggplot2)) stop('error loading ggplot2')
 tmp =c()
 for(i in 1:nrow(tgs)) {
@@ -192,12 +192,16 @@ if(!is.null(labels)) {
 tmp = cbind(tmp,labels=labels)
 }
 midpoint=median(tmp$`LncRNA(log2RPKM)`,na.rm=T)
-pdf(fname)
+
 gp=ggplot(tmp,aes(`TF(log2RPKM)`,`Gene(log2RPKM)`)) + geom_point(aes(colour=`LncRNA(log2RPKM)`),size=point.size) + scale_colour_gradient2(high= "#d7191c",mid='#ffffbf',low='#1a9641',midpoint=midpoint) 
 gp=gp+facet_wrap(~GeneName)
 if(!is.null(labels)) {
 gp = gp + geom_text(aes(label=tmp$labels),size=label.size)
 }
+  if(plot) {
+pdf(fname)
 print(gp)
 dev.off()
+    }
+  return(gp)
 }
