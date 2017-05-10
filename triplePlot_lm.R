@@ -199,7 +199,7 @@ if(!is.null(labels)) {
 gp = gp + geom_text(aes(label=tmp$labels),size=label.size)
 }
   if(!is.null(xlab)) gp = gp + xlab(xlab)
-   if(!is.null(ylab)) gp = gp + ylab(lab)
+   if(!is.null(ylab)) gp = gp + ylab(ylab)
   if(plot) {
 pdf(fname)
 print(gp)
