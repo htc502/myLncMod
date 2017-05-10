@@ -198,6 +198,8 @@ gp=gp+facet_wrap(~GeneName)
 if(!is.null(labels)) {
 gp = gp + geom_text(aes(label=tmp$labels),size=label.size)
 }
+  if(!is.null(xlab)) gp = gp + xlab(xlab)
+   if(!is.null(ylab)) gp = gp + ylab(lab)
   if(plot) {
 pdf(fname)
 print(gp)
