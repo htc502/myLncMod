@@ -5,7 +5,8 @@ my.tri.app.lm <-
 	    ##grp1 is the group which takes TF and gene expression into consideration
 	    
 	    ms,ET,M.exp,E.exp,T.exp,Ngrp = 0.25,
-             correction="BH",p.cutoff=0.01, cores=1){
+             correction="BH",p.cutoff=0.01, cores=1,
+    mc.preschedule = T){
 			 if(!(Ngrp > 0 & Ngrp <=0.5)) stop('Ngrp should be (0,0.5]')
       data.E = E.exp
       data.M = M.exp
@@ -139,7 +140,7 @@ my.tri.app.lm <-
                 return(resi)
             }
             library(parallel)
-            lmFits <- mclapply(1:nrow(MET),find_triplets,mc.cores=cores)
+            lmFits <- mclapply(1:nrow(MET),find_triplets,mc.cores=cores,mc.preschedule = mc.preschedule)
            ## lmFits <- lapply(1:nrow(MET),find_triplets) ##for debug find_triplets
             badME.idx <- unlist(lapply(lmFits, function(e) is.character(e)))
             badres <- unlist(lmFits[ badME.idx] );badres <- cbind(MET[ badME.idx,],badres)
