@@ -1,4 +1,5 @@
-
+#' @input: exp.rda triple1.rda
+#' @output: triple.plot.rda
 
 triPlot <- function(m,e,tg,fname='tmp.pdf',xlab='Sample index',ylab='Log2(RPKM)',points.cex=.8,Ngrp=.25,groupMin=20,
                    labels=NULL) {

@@ -1,3 +1,6 @@
+#' @input: exp.rda
+#' @output: ceRNA.rda
+
 get_context_ceRNAs = function(ceRNAs,tmpM.exp,tmpE.exp,cores=4) {
 lncidx=ceRNAs[,1] %in% rownames(tmpM.exp)
 mrnaidx=ceRNAs[,4] %in% tmpE.exp

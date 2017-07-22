@@ -1,3 +1,5 @@
+#' @input: exp.rda TF_Tg.rda
+#' @output: triple.rda
 my.tri.app.lm <-
     function(
 	    ##about the result:

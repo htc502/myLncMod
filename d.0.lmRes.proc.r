@@ -1,3 +1,5 @@
+#' @input: triple.rda
+#' @output: triple1.rda
 lmres_postproc <- function(filedir,fdrcutoff=.25,RNAseqdata,Ngrp=.25) {
     setwd(filedir)
     resFnames = list.files(path=filedir,pattern='lmres_.*.rda')

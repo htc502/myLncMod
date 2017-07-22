@@ -1,3 +1,6 @@
+#' @input: exp.rda
+#' @output: TF_Tg.rda
+
 getContext_TFtarget <- function(tmpE.exp, tf_target,cores=6) {
   mytf_target2 = tf_target
   tmpT.exp <- tmpE.exp
